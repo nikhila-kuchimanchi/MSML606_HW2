@@ -106,3 +106,74 @@ if __name__ == "__main__":
     print("Prefix:", prefix_traversal(root))
     print("Infix:", infix_traversal(root))
     print("Postfix:", postfix_traversal(root))
+
+
+# PROBLEM 3 - POSTFIX EVALUATION 
+
+
+class Stack:
+    def __init__(self):
+        self.items = []
+        self.top = -1  # manually track top
+
+    def is_empty(self):
+        return self.top == -1
+
+    def push(self, value):
+        self.items.append(value)
+        self.top += 1
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Pop from empty stack")
+        value = self.items[self.top]
+        self.items.pop()
+        self.top -= 1
+        return value
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Peek from empty stack")
+        return self.items[self.top]
+
+
+def evaluate_postfix(expression):
+    #Evaluates a space-separated postfix expression string.
+    #Returns numeric result.
+    stack = Stack()
+    operators = {"+", "-", "*", "/"}
+
+    tokens = expression.split()
+
+    for token in tokens:
+
+        if token not in operators:
+            # Push number 
+            stack.push(float(token))
+
+        else:
+            # Pop right then left
+            right = stack.pop()
+            left = stack.pop()
+
+            if token == "+":
+                result = left + right
+            elif token == "-":
+                result = left - right
+            elif token == "*":
+                result = left * right
+            elif token == "/":
+                if right == 0:
+                    raise ZeroDivisionError("Division by zero")
+                result = left / right
+
+            stack.push(result)
+
+    return stack.pop()
+
+
+# Testing Example
+if __name__ == "__main__":
+    expression = "5 1 2 + 4 * + 3 -"
+    result = evaluate_postfix(expression)
+    print("Postfix Evaluation Result:", result)
